@@ -37,6 +37,7 @@ final class MainViewController: UIViewController, AlertDisplayer {
     }
     
     func deselectAllButtons() {
+        isFirstSelection = true
         for button in scrollView.subviews {
             button.backgroundColor = .darkText
             button.tintColor = .gray
@@ -75,16 +76,19 @@ final class MainViewController: UIViewController, AlertDisplayer {
 
     }
     @objc func filterButton(sender: UIButton) {
-        searchBar.text = ""
-        if !isFirstSelection && lastPressedButtonTag == sender.tag  {
+        if isFirstSelection {
+            filterBeers(sender: sender)
+            isFirstSelection = false
+        } else if lastPressedButtonTag == sender.tag  {
             viewModel.cancelSearch()
             sender.backgroundColor = .darkText
             sender.tintColor = .gray
             lastPressedButtonTag = 0
+            isFirstSelection = true
         } else {
             filterBeers(sender: sender)
         }
-        isFirstSelection = false
+        searchBar.text = ""
 
         DispatchQueue.main.async {
             self.tableView.reloadData()
