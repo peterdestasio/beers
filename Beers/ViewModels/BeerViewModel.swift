@@ -103,10 +103,10 @@ final class BeerViewModel {
             }
         }
     }
-        private func calculateIndexPathsToReload(from newBeers: [Beer]) -> [IndexPath] {
-            let endIndex = isSearching ? filteredBeers.count : beers.count
-            let startIndex = isSearching ? filteredBeers.count - newBeers.count : beers.count - newBeers.count
-            return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0)}
-        }
+    private func calculateIndexPathsToReload(from newBeers: [Beer]) -> [IndexPath] {
+        let endIndex = isSearching ? filteredBeers.count : beers.count
+        let startIndex = isSearching ? filteredBeers.count - newBeers.count : beers.count - newBeers.count
+        return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0)}
+    }
                            
 }

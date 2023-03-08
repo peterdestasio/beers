@@ -14,9 +14,10 @@ final class MainViewController: UIViewController, AlertDisplayer {
     @IBOutlet weak var scrollView: UIScrollView!
     private var viewModel: BeerViewModel!
     private var imageDownloader = ImageDownloaderService()
-    private var isSearching = false
-    private var lastPressedButton = Int()
+    private var lastPressedButtonTag = 0
+    private var isFirstSelection = true
     private let svButtons = ScrollViewButtons.shared
+    
     private lazy var detailVC: BeerDetailViewController = {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         var viewController = storyboard.instantiateViewController(withIdentifier: "BeerDetailViewController") as! BeerDetailViewController
@@ -75,23 +76,28 @@ final class MainViewController: UIViewController, AlertDisplayer {
     }
     @objc func filterButton(sender: UIButton) {
         searchBar.text = ""
-        if lastPressedButton == sender.tag {
+        if !isFirstSelection && lastPressedButtonTag == sender.tag  {
             viewModel.cancelSearch()
             sender.backgroundColor = .darkText
             sender.tintColor = .gray
-            lastPressedButton = Int()
+            lastPressedButtonTag = 0
         } else {
-            viewModel.fetchBeers()
-            viewModel.filterBeers(by: svButtons.buttonStrings[sender.tag])
-            deselectAllButtons()
-            sender.tintColor = .black
-            sender.backgroundColor = UIColor(named: "BeerAccent")
-            lastPressedButton = sender.tag
+            filterBeers(sender: sender)
         }
+        isFirstSelection = false
 
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    private func filterBeers(sender: UIButton) {
+        viewModel.fetchBeers()
+        viewModel.filterBeers(by: svButtons.buttonStrings[sender.tag])
+        deselectAllButtons()
+        sender.tintColor = .black
+        sender.backgroundColor = UIColor(named: "BeerAccent")
+        lastPressedButtonTag = sender.tag
     }
     
     func styleNavBar() {
